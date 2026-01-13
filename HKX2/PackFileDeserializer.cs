@@ -76,6 +76,19 @@ namespace HKX2
             return ConstructVirtualClass(br2, 0);
         }
 
+        public IHavokObject Deserialize(BinaryReaderEx br, out Dictionary<uint, IHavokObject> objects, bool ignoreNonFatalError = false)
+        {
+            _ignoreNonFatalError = ignoreNonFatalError;
+
+            DeserializePartially(br);
+
+            // Deserialize the objects
+            _deserializedObjects = new Dictionary<uint, IHavokObject>();
+            var br2 = new BinaryReaderEx(_header.Endian == 0, _header.PointerSize == 8, _dataSection.SectionData);
+            objects = _deserializedObjects;
+            return ConstructVirtualClass(br2, 0);
+        }
+
         #region Read methods
 
         private void PadToPointerSizeIfPaddingOption(BinaryReaderEx br)
